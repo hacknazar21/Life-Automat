@@ -8,8 +8,8 @@ let particles = [];
 
 const centerX = canvas.view.width / 2;
 const centerY = canvas.view.height / 2;
-const paddingLeftRight = 10;
-const paddingTopBottom = 10;
+const paddingLeftRight = 100;
+const paddingTopBottom = 100;
 
 const counterDOM = document.querySelector('.counter>span');
 
@@ -70,8 +70,6 @@ function tick() {
 			}
 		}
 		if (s < 2 || s > 3) {
-			console.log(s)
-
 			particles.splice(index, 1);
 		}
 		else {
@@ -90,11 +88,13 @@ function tick() {
 					}
 				}
 			}
-
+			if (particles[particles.length - 1].position.x > canvas.view.width || particles[particles.length - 1].position.y > canvas.view.height) {
+				particles.splice(particles.length - 1, 1);
+			}
 		}
 		s = 0;
 	}
-	//console.log(particles.length);
+
 	canvas.container = particles;
 	counterDOM.innerHTML = particles.length;
 	canvas.clear();
