@@ -11,7 +11,7 @@ const centerY = canvas.view.height / 2;
 const paddingLeftRight = 10;
 const paddingTopBottom = 10;
 
-for (let index = 0; index < 200; index++) {
+for (let index = 0; index < 100 * (centerX / centerY); index++) {
 	particles.push(
 		new Particle({
 			x: getRandomBetween(paddingLeftRight, canvas.view.width - paddingLeftRight),
