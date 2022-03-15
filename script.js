@@ -11,13 +11,9 @@ const centerY = canvas.view.height / 2;
 const paddingLeftRight = 10;
 const paddingTopBottom = 10;
 
-for (let index = 0; index < 100 * (centerX / centerY); index++) {
-	particles.push(
-		new Particle({
-			x: getRandomBetween(paddingLeftRight, canvas.view.width - paddingLeftRight),
-			y: getRandomBetween(paddingTopBottom, canvas.view.height - paddingTopBottom),
-		}));
-}
+const counterDOM = document.querySelector('.counter>span');
+
+
 /* particles.push(
 	new Particle({
 		x: centerX,
@@ -54,6 +50,18 @@ function tick() {
 	let s = 0;
 	let coordAround = [];
 
+	if (particles.length == 0) {
+		for (let index = 0; index < 100 * (centerX / centerY); index++) {
+			particles.push(
+				new Particle({
+					x: getRandomBetween(paddingLeftRight, canvas.view.width - paddingLeftRight),
+					y: getRandomBetween(paddingTopBottom, canvas.view.height - paddingTopBottom),
+				}));
+		}
+	}
+	else if (particles.length > 1500) {
+		particles = [];
+	}
 	for (let index = 0; index < particles.length; index++) {
 		for (let jindex = 1; jindex < particles.length - 1; jindex++) {
 			if ((particles[index].position.x + particles[index].r + 1) - (particles[jindex].position.x + particles[jindex].r) == 0) {
@@ -88,7 +96,7 @@ function tick() {
 	}
 	//console.log(particles.length);
 	canvas.container = particles;
-
+	counterDOM.innerHTML = particles.length;
 	canvas.clear();
 
 	canvas.draw();

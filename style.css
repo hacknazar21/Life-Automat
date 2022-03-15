@@ -3,4 +3,12 @@ body {
 	padding: 0;
 	overflow: hidden;
 	background-color: #000;
+	position: relative;
+}
+.counter {
+	position: absolute;
+	top: 10%;
+	right: 10%;
+	color: grey;
+	font-size: 30px;
 }
