@@ -2,71 +2,61 @@ class Canvas {
 	constructor() {
 		this.view = document.createElement("canvas");
 		this.context = this.view.getContext("2d");
+		this.padding = 0;
 
 		this.container = [];
-
+		this.grid;
 		this.resize();
+		this.width = this.view.width;
+		this.height = this.view.height;
+		this.viewWidth = this.width - this.padding * 2;
+		this.viewHeight = this.height - this.padding * 2;
 		window.addEventListener("resize", () => this.resize());
+	}
+
+
+
+
+	drawGrid() {
+		this.grid = new Array();
+		let i = 0;
+		for (let x = this.padding; x <= this.viewWidth; x += r) {
+			this.grid.push(new Array());
+			let j = 0;
+			for (let y = this.padding; y <= this.viewHeight; y += r) {
+				this.grid[i][j++] = {
+					x: x,
+					y: y,
+					isLife: false
+				};
+			}
+			i++;
+		}
 
 	}
 
-	clear() {
-		this.view.width |= this.view.width;
+	updateGrid({ x, y, isLife }) {
+		if (isLife) {
+			this.context.fillStyle = 'red';
+			this.context.fillRect(x, y, r, r);
 
-	}
 
-	draw() {
-		for (const item of this.container) {
-			item.draw(this);
+		}
+		else {
+			this.context.clearRect(x, y, r, r);
+
 		}
 	}
 
-	drawCircle(param) {
-		this.context.beginPath();
-		this.context.arc(param.x, param.y, param.r, 0, 2 * Math.PI);
 
-		if (param.fillStyle) {
-			this.context.fillStyle = param.fillStyle;
-			this.context.fill();
-		}
 
-		if (param.strokeStyle) {
-			this.context.strokeStyle = param.strokeStyle;
-			this.context.stroke();
-		}
-	}
-
-	drawLine(param) {
-		this.context.beginPath();
-		this.context.moveTo(param.x1, param.y1);
-		this.context.lineTo(param.x2, param.y2);
-		this.context.lineWidth = param.lineWidth;
-
-		if (param.strokeStyle) {
-			this.context.strokeStyle = param.strokeStyle;
-			this.context.stroke();
-		}
-	}
 
 	resize() {
 		this.view.width = window.innerWidth;
 		this.view.height = window.innerHeight;
 	}
 
-	add(...items) {
-		for (const item of items) {
-			if (!this.container.includes(item)) {
-				this.container.push(item);
-			}
-		}
-	}
 
-	remove(...items) {
-		for (const item of items) {
-			if (this.container.includes(item)) {
-				const index = this.container.indexOf(item);
-				this.context.splice(index, 1);
-			}
-		}
-	}
+
+
 }

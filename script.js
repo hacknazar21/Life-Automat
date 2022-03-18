@@ -1,103 +1,123 @@
-const G = 0.8;
-const P = 1;
-const COLLAPSE_LENGTH = 0.00001;
-const canvas = new Canvas();
+const canvasGrid = new Canvas();
 
-let particles = [];
+const r = 5;
+let numberLife = 0;
 
-
-const centerX = canvas.view.width / 2;
-const centerY = canvas.view.height / 2;
-const paddingLeftRight = 100;
-const paddingTopBottom = 100;
 
 const counterDOM = document.querySelector('.counter>span');
+canvasGrid.drawGrid();
 
-
-/* particles.push(
-	new Particle({
-		x: centerX,
-		y: centerY - 4,
-	}));
-particles.push(
-	new Particle({
-		x: centerX + 4,
-		y: centerY,
-	}));
-particles.push(
-	new Particle({
-		x: centerX - 4,
-		y: centerY + 4,
-	}));
-particles.push(
-	new Particle({
-		x: centerX,
-		y: centerY + 4,
-	}));
-particles.push(
-	new Particle({
-		x: centerX + 4,
-		y: centerY + 4,
-	})); */
-canvas.add(...particles);
-
-document.body.append(canvas.view);
-
-requestAnimationFrame(tick);
-
-function tick() {
-	requestAnimationFrame(tick);
-	let s = 0;
-	let coordAround = [];
-
-	if (particles.length == 0) {
-		for (let index = 0; index < 100 * (centerX / centerY); index++) {
-			particles.push(
-				new Particle({
-					x: getRandomBetween(paddingLeftRight, canvas.view.width - paddingLeftRight),
-					y: getRandomBetween(paddingTopBottom, canvas.view.height - paddingTopBottom),
-				}));
+document.body.insertAdjacentElement('beforeend', canvasGrid.view);
+for (let c = 0; c < 1500 * window.innerWidth / window.innerHeight; c++) {
+	let i = getRandomBetween(0, canvasGrid.grid.length - 1);
+	let j = getRandomBetween(0, canvasGrid.grid[0].length - 1);
+	canvasGrid.grid[i][j].isLife = true;
+	canvasGrid.updateGrid(canvasGrid.grid[i][j])
+}
+/* canvasGrid.grid[10][10].isLife = true;
+canvasGrid.updateGrid(canvasGrid.grid[10][10])
+canvasGrid.grid[10][11].isLife = true;
+canvasGrid.updateGrid(canvasGrid.grid[10][11])
+canvasGrid.grid[10][12].isLife = true;
+canvasGrid.updateGrid(canvasGrid.grid[10][12]) */
+start_animate(20);
+function start_animate(duration) {
+	var requestID;
+	var startTime = null;
+	var animate = function (time) {
+		time = new Date().getTime(); //millisecond-timstamp
+		if (startTime === null) {
+			startTime = time;
 		}
-	}
-	else if (particles.length > 1500) {
-		particles = [];
-	}
-	for (let index = 0; index < particles.length; index++) {
-		for (let jindex = 1; jindex < particles.length - 1; jindex++) {
-			if ((particles[index].position.x + particles[index].r + 1) - (particles[jindex].position.x + particles[jindex].r) == 0) {
-				s++;
-				coordAround.push(particles[jindex]);
-			}
-		}
-		if (s < 2 || s > 3) {
-			particles.splice(index, 1);
+		var progress = time - startTime;
+
+		startTime++;
+
+		if (progress > duration) {
+			getRules();
+
+			requestID = requestAnimationFrame(animate);
+			startTime = null;
+
 		}
 		else {
-			for (let x = particles[index].position.x - particles[index].r - 1; x < particles[index].position.x + particles[index].r + 1; x++) {
-				for (let y = particles[index].position.y - particles[index].r - 1; y < particles[index].position.y + particles[index].r + 1; y++) {
-					for (const coord of coordAround) {
-						if (x != coord.position.x + particles[index].r && y != coord.position.y + particles[index].r) {
-							particles.push(
-								new Particle({
-									x: x,
-									y: y,
-								})
-							);
-							break;
-						}
-					}
-				}
-			}
-			if (particles[particles.length - 1].position.x > canvas.view.width || particles[particles.length - 1].position.y > canvas.view.height) {
-				particles.splice(particles.length - 1, 1);
-			}
+			cancelAnimationFrame(requestID);
 		}
-		s = 0;
+		requestID = requestAnimationFrame(animate);
 	}
 
-	canvas.container = particles;
-	counterDOM.innerHTML = particles.length;
-	canvas.clear();
 
-	canvas.draw();
+
+	animate();
+}
+
+
+function getRules() {
+
+	let counterLife = 0;
+	let forDeath = [];
+	let forBirth = [];
+
+
+	canvasGrid.grid.forEach((gridColumn, indexY) => {
+		gridColumn.forEach((gridCell, indexX) => {
+			let counterAroundLife = 0;
+			if (
+				(indexY - 1) > 0
+				&& canvasGrid.grid[indexY - 1][indexX].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexY + 1) < canvasGrid.grid.length
+				&& canvasGrid.grid[indexY + 1][indexX].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexX - 1) > 0
+				&& canvasGrid.grid[indexY][indexX - 1].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexX + 1) < canvasGrid.grid[0].length
+				&& canvasGrid.grid[indexY][indexX + 1].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexY - 1) > 0
+				&& (indexX - 1) > 0
+				&& canvasGrid.grid[indexY - 1][indexX - 1].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexY + 1) < canvasGrid.grid.length
+				&& (indexX + 1) < canvasGrid.grid[0].length
+				&& canvasGrid.grid[indexY + 1][indexX + 1].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexY - 1) > 0
+				&& (indexX + 1) < canvasGrid.grid[0].length
+				&& canvasGrid.grid[indexY - 1][indexX + 1].isLife
+			) { counterAroundLife++; }
+			if (
+				(indexY + 1) < canvasGrid.grid.length
+				&& (indexX - 1) > 0
+				&& canvasGrid.grid[indexY + 1][indexX - 1].isLife
+			) { counterAroundLife++; }
+
+			if (gridCell.isLife) {
+				counterLife++;
+				if (counterAroundLife < 2 || counterAroundLife > 3) forDeath.push(gridCell);
+			}
+			else { if (counterAroundLife == 3) forBirth.push(gridCell); }
+		});
+	});
+	console.log(forDeath)
+	forDeath.forEach(cell => {
+		cell.isLife = false;
+		canvasGrid.updateGrid(cell);
+	});
+	forBirth.forEach(cell => {
+		cell.isLife = true;
+		canvasGrid.updateGrid(cell);
+
+	});
+
+
+	counterDOM.innerHTML = counterLife;
+
 }
