@@ -5,15 +5,23 @@ body {
 	background-color: rgb(3, 3, 3);
 	position: relative;
 }
-.counter {
+.data {
 	position: absolute;
-	top: 5%;
-	right: 5%;
+	bottom: 1%;
+	right: 1%;
 	color: grey;
 	font-size: 30px;
+	text-align: right;
+	background-color: #fff;
+	padding: 20px;
+}
+.counter {
+}
+.generation {
 }
 @media (max-width: 500px) {
-	.counter {
-		font-size: 20px;
+	.counter,
+	.generation {
+		font-size: 22px;
 	}
 }
